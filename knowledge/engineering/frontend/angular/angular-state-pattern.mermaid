@@ -1,0 +1,58 @@
+flowchart TB
+    subgraph "Angular Application"
+        subgraph "Global State Layer"
+            Store["Store\n(Global Shared State)"]
+            StoreSignals["Store Signals\n(Reactive State)"]
+            Store <--> StoreSignals
+        end
+
+         subgraph "Component Layer"
+            Comp1["Component A\n(Local State)"]
+            Comp2["Component B\n(Local State)"]
+            CompN["Component N\n(Local State)"]
+
+            LocalState1["Local Signal State A"]
+            LocalState2["Local Signal State B"]
+            LocalStateN["Local Signal State N"]
+
+            Comp1 <--> LocalState1
+            Comp2 <--> LocalState2
+            CompN <--> LocalStateN
+        end
+
+        subgraph "Service Layer"
+            Service1["Service A"]
+            Service2["Service B"]
+            ServiceN["Service N"]
+        end
+
+
+    end
+
+    %% Write operations (Component to Services to Store)
+    Comp1 -- " Action" --> Service1
+    Comp2 -- " Action" --> Service2
+    CompN -- " Action" --> ServiceN
+    CompN -- " Action" --> Service2
+
+    Service1 -- " Patch State " --> Store
+    Service2 -- " Patch State " --> Store
+    ServiceN -- " Patch State " --> Store
+
+    %% Read operations (Store to Components)
+    StoreSignals -- " Read Reactive State Signals " --> Comp1
+    StoreSignals -- " Read Reactive State Signals " --> Comp2
+    StoreSignals -- " Read Reactive State Signals " --> CompN
+
+    %% Style nodes
+    classDef store color:#000,fill:#f9f,stroke:#333,stroke-width:2px
+    classDef signal color:#000,fill:#bbf,stroke:#333,stroke-width:2px
+    classDef service color:#000,fill:#fdd,stroke:#333,stroke-width:2px
+    classDef component color:#000,fill:#dfd,stroke:#333,stroke-width:2px
+    classDef local color:#000,fill:#eff,stroke:#333,stroke-width:1px
+
+    class Store,Store store
+    class StoreSignals signal
+    class Service1,Service2,ServiceN service
+    class Comp1,Comp2,CompN component
+    class LocalState1,LocalState2,LocalStateN local
