@@ -19,6 +19,17 @@ const EMAIL = process.env.TAILWIND_EMAIL || '';
 const PASSWORD = process.env.TAILWIND_PASSWORD || '';
 const USE_INTERACTIVE_LOGIN = !EMAIL || !PASSWORD;
 
+function waitForUser(message) {
+  process.stdout.write(`${message}\n`);
+  return new Promise((resolve) => {
+    process.stdin.resume();
+    process.stdin.once('data', () => {
+      process.stdin.pause();
+      resolve();
+    });
+  });
+}
+
 // Main scraping function
 async function scrapeUIBlocks() {
   // Launch browser in headful mode to allow for manual login if needed
@@ -39,17 +50,27 @@ async function scrapeUIBlocks() {
     waitUntil: 'networkidle',
   });
 
-  console.log('Attempting automated login...');
+  console.log(
+    USE_INTERACTIVE_LOGIN
+      ? 'Interactive login enabled. Complete authentication in the browser window.'
+      : 'Attempting automated login...'
+  );
   try {
-    // Wait for login form elements to be ready
-    await page.waitForSelector('input[type="email"]', { timeout: 10000 });
-    await page.fill('input[type="email"]', EMAIL);
-    await page.fill('input[type="password"]', PASSWORD);
-    await page.click('button[type="submit"]');
+    if (USE_INTERACTIVE_LOGIN) {
+      await waitForUser(
+        'Press Enter here after completing login inside the browser window.'
+      );
+    } else {
+      // Wait for login form elements to be ready
+      await page.waitForSelector('input[type="email"]', { timeout: 10000 });
+      await page.fill('input[type="email"]', EMAIL);
+      await page.fill('input[type="password"]', PASSWORD);
+      await page.click('button[type="submit"]');
 
-    // Wait a moment for login submission to process before navigating away
-    console.log('Login submitted, waiting briefly...');
-    await page.waitForTimeout(2000); // Short delay after clicking login
+      // Wait a moment for login submission to process before navigating away
+      console.log('Login submitted, waiting briefly...');
+      await page.waitForTimeout(2000); // Short delay after clicking login
+    }
 
     console.log(
       'Navigating to Tailwind UI Blocks preview page after login attempt...'
