@@ -14,6 +14,11 @@ This living document tracks the evolving structure of the My Master Context (MMC
 - `scripts/` — automation utilities (e.g., Tailwind UI scraper, context builders); scripts should document dependencies.
 - `assets/` — heavy binary artifacts (images, archives) referenced from knowledge articles.
 
+## Current Imports
+- Design style library migrated from early AI blog experiments (`knowledge/design/styles/`).
+- Tailwind UI snippet catalog with screenshots and code (`knowledge/design/ui-tailwind/` + scraper in `scripts/tailwindui/`).
+- Angular state architecture diagrams for frontend patterns (`knowledge/engineering/frontend/angular/`).
+
 ## Near-Term Tasks
 1. Normalize naming for migrated content (design styles, Tailwind blocks, Angular architecture notes).
 2. Capture marketing-oriented knowledge (Content Flow strategy, campaign templates) in `knowledge/marketing/`.
